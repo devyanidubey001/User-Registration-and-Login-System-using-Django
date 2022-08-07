@@ -1,8 +1,7 @@
+{% load static %}
+
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+
 <html>
 
 <head>
@@ -11,7 +10,18 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'authentication/login.css' %}">
+    <link rel="stylesheet" href="{% static 'authentication/index.css' %}">
+    <style>
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -23,17 +33,30 @@
         </button>
     </div>
     {% endfor %}
-    <h3>Welcome!</h3>
-    <h3>Hello {{fname}}!</h3>
-    <h4>You're successfully logged in.</h4>
-    <h4>You Registered on {{ registration_time }}</h4>
+    <h4 style="text-align:center">Welcome!</h4> <br>
+    <h4 style="text-align:center">Hello {{fname}}!</h4> <br>
+    <h4 style="text-align:center">You Registered on {{ registration_time }}</h4>
     <br>
-    <h5>Your Login History.</h5>
-    {% for login in login_and_logout_history %}
-    <p>{{ login }}</p>
-    {% endfor %}
-    <button type="submit"><a href="/logout">Log Out</a></button>
+    <h5 style="text-align:center">Your Login and Logout History.</h5> <br>
+    <table border="3">
+        <tr>
+            <th style="text-align:center">History</th>
+        </tr>
+        <tr>
+            {% for login in login_and_logout_history %}
+            <td> {{ login.0 }}: {{ login.1 }}</td>
+        </tr>
+
+        {% endfor %}
+    </table> <br>
+    <div class="form">
+
+        <button type="submit"><a href="/logout">Log Out</a></button>
+    </div>
     <script src="" async defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

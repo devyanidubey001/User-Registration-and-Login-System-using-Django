@@ -1,0 +1,26 @@
+.page-header {
+    background-color: palevioletred;
+    margin-top: 0;
+    margin-bottom: 40px;
+    padding: 20px 20px 20px 40px;
+    font-style: normal;
+    color: #ffffff;
+}
+
+
+
+.page-header h1,
+.page-header h1 a,
+.page-header h1 a:visited,
+.page-header h1 a:active {
+    color: #ffffff;
+    font-size: 36pt;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Lobster', cursive;
+    color: aliceblue;
+}

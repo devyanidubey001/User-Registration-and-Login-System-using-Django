@@ -58,7 +58,6 @@ class AuthenticationService:
         username = request.session.get("user")
         if username == None:
             return None
-
         user = self.getUserByUsername(username=username)
         logout(request)
         return user
