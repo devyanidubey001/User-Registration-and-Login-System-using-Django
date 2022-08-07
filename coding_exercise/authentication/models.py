@@ -9,15 +9,19 @@ class LoginLogoutLog(models.Model):
     logout_time = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        if self.logout_time == None:
-            return (
-                self.user.username
-                + " "
-                + self.login_time.strftime("%m/%d/%Y, %H:%M:%S")
+        logString = self.user.username
+        if self.registration_time != None:
+            logString += (
+                "Registration time"
+                + self.registration_time.astimezone().strftime("%m/%d/%Y, %H:%M:%S")
             )
-        return (
-            self.user.username
-            + " "
-            + self.login_time.strftime("%m/%d/%Y, %H:%M:%S")
-            + self.logout_time.strftime("%m/%d/%Y, %H:%M:%S")
-        )
+        if self.login_time != None:
+            logString += "Login time" + self.login_time.astimezone().strftime(
+                "%m/%d/%Y, %H:%M:%S"
+            )
+        if self.logout_time != None:
+            logString += "Logout time" + self.logout_time.astimezone().strftime(
+                "%m/%d/%Y, %H:%M:%S"
+            )
+
+        return logString

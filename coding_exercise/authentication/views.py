@@ -78,13 +78,18 @@ def loginUser(request):
             user_history_for_login = LoginLogoutLog.objects.filter(user=user).order_by(
                 "-login_time"
             )
+            print(user_history_for_login, "USER HISTORY")
             user_history_for_logout = LoginLogoutLog.objects.filter(user=user).order_by(
                 "-logout_time"
             )
             login_and_logout_history = []
+            user_registration_time = None
             for users in user_history_for_login:
+                if users.registration_time != None:
+                    user_registration_time = users.registration_time
                 if users.login_time != None:
                     login_and_logout_history.append(("Login Time", users.login_time))
+
             for users in user_history_for_logout:
                 if users.logout_time != None:
                     login_and_logout_history.append(("Logout Time", users.logout_time))
@@ -92,24 +97,22 @@ def loginUser(request):
             final_login_and_logout_history = []
             for time in login_and_logout_history:
                 final_login_and_logout_history.append(
-                    (time[0], time[1].strftime("%m/%d/%Y, %H:%M:%S"))
+                    (
+                        time[0],
+                        time[1].astimezone().strftime("%m/%d/%Y, %-I:%H:%M:%S %p"),
+                    )
                 )
 
             messages.success(request, "Logged In Sucessfully!!")
             fname = user.first_name
-            registration_time = (
-                LoginLogoutLog.objects.filter(user=user)
-                .order_by("registration_time")
-                .first()
-            )
-            print(registration_time, "registration_time")
+            print(final_login_and_logout_history)
             return render(
                 request,
                 "authentication/succesfullLogin.html",
                 {
                     "fname": fname,
                     "login_and_logout_history": final_login_and_logout_history,
-                    "registration_time": registration_time,
+                    "registration_time": user_registration_time,
                 },
             )
         else:
