@@ -3,7 +3,7 @@ from django.utils import timezone
 
 
 class AuthenticationLogging:
-    def logRegistrationTime(user):
+    def logRegistrationTime(self, user):
         LoginLogoutLog.objects.create(user=user, registration_time=timezone.now())
 
     def logLoginTime(self, user):
@@ -47,7 +47,7 @@ class AuthenticationLogging:
             final_login_and_logout_history.append(
                 (
                     time[0],
-                    time[1].astimezone().strftime("%m/%d/%Y, %-I:%H:%M:%S %p"),
+                    time[1].astimezone().strftime("%m/%d/%Y, %-I:%M:%S %p"),
                 )
             )
         return final_login_and_logout_history

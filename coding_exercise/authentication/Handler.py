@@ -33,7 +33,7 @@ class Handler:
             # returning error response in case of registration failure
             if isinstance(registrationResult, Exception):
                 messages.error(request, str(registrationResult))
-                return redirect("login")
+                return redirect("registration")
 
             myuser = registrationResult
 
@@ -51,52 +51,49 @@ class Handler:
 
     def userLoginAuthentication(self, request):
 
-        if request.session.get("user") != None:
-            return render(request, "authentication/succesfullLogin.html")
+        user = self.authenticationService.getUserInSession(request)
+        if user != None:
+            return self.processLoginResponse(request, user)
 
         if request.method == "POST":
-            username = request.POST.get("username")
-            pass1 = request.POST.get("password")
-            user = authenticate(username=username, password=pass1)
+
+            user = self.authenticationService.loginUser(request)
+
             # For User to login
-            if user is not None:
-                self.authenticationService.loginUser(request, user)
-                # For login and logout sessions
-                request.session["user"] = user.username
-                # To store the login time of user
-                self.authenticationLogging.logLoginTime(user)
-
-                final_login_and_logout_history = (
-                    self.authenticationLogging.getAuthenticationHistory(user)
-                )
-                user_registration_time = self.authenticationLogging.getRegistrationTime(
-                    user
-                )
-
-                messages.success(request, "Logged In Sucessfully!!")
-                fname = user.first_name
-                return render(
-                    request,
-                    "authentication/succesfullLogin.html",
-                    {
-                        "fname": fname,
-                        "login_and_logout_history": final_login_and_logout_history,
-                        "registration_time": user_registration_time,
-                    },
-                )
-            else:
+            if user is None:
                 messages.error(request, "Bad Credentials!!")
                 return redirect("home")
 
+            # To store the login time of user
+            self.authenticationLogging.logLoginTime(user)
+
+            return self.processLoginResponse(request, user)
+
         return render(request, "authentication/login.html")
 
+    def processLoginResponse(self, request, user):
+        auth_history = self.authenticationLogging.getAuthenticationHistory(user)
+        user_registration_time = self.authenticationLogging.getRegistrationTime(user)
+
+        messages.success(request, "Logged In Sucessfully!!")
+        fname = user.first_name
+        return render(
+            request,
+            "authentication/succesfullLogin.html",
+            {
+                "fname": fname,
+                "login_and_logout_history": auth_history,
+                "registration_time": user_registration_time,
+            },
+        )
+
     def userLogoutAuthentication(self, request):
-        username = request.session.get("user")
-        if username == None:
+        user = self.authenticationService.logoutUser(request)
+        if user == None:
             messages.error(request, "Please Log In First")
             return redirect("home")
-        user = User.objects.filter(username=username).first()
+
         self.authenticationLogging.logLogoutTime(user)
-        self.authenticationService.logoutUser(request)
+
         messages.success(request, "Logged Out Successfully!!")
         return redirect("home")

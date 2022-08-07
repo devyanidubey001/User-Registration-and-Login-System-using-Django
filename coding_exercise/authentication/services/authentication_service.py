@@ -29,8 +29,36 @@ class AuthenticationService:
 
         return myuser
 
-    def loginUser(self, request, user):
+    def getUserByUsername(self, username):
+        return User.objects.filter(username=username).first()
+
+    def getUserInSession(self, request):
+        usernameFromSession = request.session.get("user")
+        print("user from session", usernameFromSession)
+        if usernameFromSession == None:
+            return None
+
+        return self.getUserByUsername(usernameFromSession)
+
+    def loginUser(self, request):
+        user = None
+
+        username = request.POST.get("username")
+        pass1 = request.POST.get("password")
+        user = authenticate(username=username, password=pass1)
+
+        if user == None:
+            return None
+
         login(request, user)
+        request.session["user"] = user.username
+        return user
 
     def logoutUser(self, request):
+        username = request.session.get("user")
+        if username == None:
+            return None
+
+        user = self.getUserByUsername(username=username)
         logout(request)
+        return user
