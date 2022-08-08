@@ -16,6 +16,10 @@ class Handler:
         self.authenticationLogging = authenticationLogging
 
     def registration(self, request):
+        user = self.authenticationService.getUserInSession(request)
+        if user != None:
+            return self.processLoginResponse(request, user)
+
         if request.method == "POST":
             # fetching values from request
             username = request.POST.get("username")
@@ -49,8 +53,10 @@ class Handler:
 
         return render(request, "authentication/registration.html")
 
-    def userLoginAuthentication(self, request):
+    # Authenticating login of a user
 
+    def userLoginAuthentication(self, request):
+        # Check if user did not logout
         user = self.authenticationService.getUserInSession(request)
         if user != None:
             return self.processLoginResponse(request, user)
@@ -71,6 +77,7 @@ class Handler:
 
         return render(request, "authentication/login.html")
 
+    # Fetching login and logout history and rendering to logged in user
     def processLoginResponse(self, request, user):
         auth_history = self.authenticationLogging.getAuthenticationHistory(user)
         user_registration_time = self.authenticationLogging.getRegistrationTime(user)
@@ -87,8 +94,10 @@ class Handler:
             },
         )
 
+    # Log out user authentication
     def userLogoutAuthentication(self, request):
         user = self.authenticationService.logoutUser(request)
+        # If user has not logged in
         if user == None:
             messages.error(request, "Please Log In First")
             return redirect("home")
